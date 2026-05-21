@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-kubernetes-svc
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  type: ClusterIP
+  ports:
+  - name: hello-kubernetes-port
+    port: 80
+    targetPort: 8080
+  selector:
+    app: hello-kubernetes

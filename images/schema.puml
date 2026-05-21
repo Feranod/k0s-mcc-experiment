@@ -1,0 +1,77 @@
+@startuml kubernetes-simple
+
+top to bottom direction
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+skinparam nodesep 22
+skinparam ranksep 28
+
+skinparam package {
+	BackgroundColor #efefef
+	BorderColor #d0d0d0
+}
+
+skinparam rectangle {
+	BackgroundColor #ffffff
+	BorderColor #bfc7d5
+}
+
+package "Kubernetes cluster" {
+	together {
+		package "Control plane" {
+			rectangle "Ingress router" as ingress
+			rectangle "kube-apiserver" as apiserver
+			rectangle "kube-scheduler" as scheduler
+			rectangle "kube-controller-manager" as controller
+			database "etcd" as etcd
+		}
+
+		package "Worker node" {
+			rectangle "kubelet" as kubelet
+			rectangle "kube-proxy" as proxy
+			rectangle "Pod" as pod
+			rectangle "Containers" as containers
+		}
+
+		package "Infra node" {
+			rectangle "Monitoring" as monitoring
+			rectangle "Logging" as logging
+			rectangle "kubelet" as kubelet2
+			rectangle "kube-proxy" as proxy2
+			rectangle "Jobs" as jobs
+		}
+	}
+}
+
+package "External components" {
+	rectangle "Persistent storage" as storage
+	rectangle "Container registry" as registry
+}
+
+apiserver --> scheduler
+apiserver --> controller
+controller --> etcd
+
+apiserver --> kubelet
+apiserver --> kubelet2
+kubelet --> pod
+proxy --> pod
+pod --> containers
+
+storage ..> pod : volumes
+registry ..> containers : images
+
+kubelet -[hidden]- ingress
+ingress -[hidden]- monitoring
+monitoring -[hidden]- logging
+logging -[hidden]- jobs
+
+proxy2 --> monitoring
+proxy2 --> logging
+proxy2 --> jobs
+kubelet2 --> monitoring
+kubelet2 --> logging
+kubelet2 --> jobs
+
+@enduml

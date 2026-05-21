@@ -1,0 +1,10 @@
+namespace: frantisek-hello-helm
+
+deployment:
+  replicas: 1
+
+env:
+  message: "I changed this through Helm!"
+
+ingress:
+  host: test-helm.aura.local

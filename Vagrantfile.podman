@@ -1,0 +1,22 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "oraclelinux/10"
+  config.vm.hostname = "podman.aura.local"
+
+  config.vm.network "private_network", ip: "192.168.56.11"
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = false
+  
+    vb.memory = "4096"
+    vb.cpus = "8"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+    #dnf update -y
+    dnf install vim plocate podman -y
+    systemctl start firewalld
+    firewall-cmd --permanent --zone=public --add-port=80/tcp
+    firewall-cmd --reload
+  SHELL
+end
