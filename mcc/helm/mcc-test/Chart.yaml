@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mcc-test
+description: First MCC experiment chart in local k0s environment
+version: 0.1.0
+appVersion: "test"
+type: application

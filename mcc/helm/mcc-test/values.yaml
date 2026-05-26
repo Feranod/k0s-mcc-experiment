@@ -1,0 +1,10 @@
+namespace: mcc-test
+
+deployment:
+  replicas: 1
+
+env:
+  message: "MCC test chart is deployed from my own workspace"
+
+ingress:
+  host: test-mcc.aura.local

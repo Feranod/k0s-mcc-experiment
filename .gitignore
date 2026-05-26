@@ -1,7 +1,7 @@
 .vagrant/
-install/
 *.tar
 .asciidoctor/
 *.log
 *.tmp
 *.box
+install/
