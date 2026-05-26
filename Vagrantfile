@@ -6,13 +6,13 @@ Vagrant.configure("2") do |config|
     k0s.vm.hostname = "k0s.aura.local"
 
     k0s.vm.network "private_network", ip: "192.168.56.12"
-
+    k0s.vm.network "forwarded_port", guest: 30123, host: 30123, auto_correct: true
     k0s.vm.provider "virtualbox" do |vb|
       # Display the VirtualBox GUI when booting the machine
       vb.gui = true
     
       vb.memory = "8192"
-      vb.cpus = "2"
+      vb.cpus = "4"
     end
     k0s.vm.provision "shell", inline: <<-SHELL
       #dnf update -y
