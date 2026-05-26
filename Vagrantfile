@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-
+  config.vm.boot_timeout = 900
   config.vm.define "k0s" do |k0s|
       
     k0s.vm.box = "oraclelinux/10"
