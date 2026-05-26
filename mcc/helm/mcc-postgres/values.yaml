@@ -1,0 +1,14 @@
+namespace: mcc-db
+
+postgres:
+  image: postgres:16
+  pullPolicy: IfNotPresent
+
+  database: mcc
+  username: mcc
+  password: mcc-local-password
+
+  port: 5432
+
+storage:
+  size: 2Gi
