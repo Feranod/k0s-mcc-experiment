@@ -63,6 +63,19 @@ echo "Liquibase logs:"
 $KUBECTL logs -n "$NAMESPACE" -l app=mcc-liquibase
 
 echo
+echo "Verifying Liquibase result in PostgreSQL..."
+
+VERIFY_POD="mcc-db-verify-$(date +%s)"
+
+$KUBECTL run "$VERIFY_POD" \
+  --rm -i \
+  --namespace "$NAMESPACE" \
+  --image=postgres:16 \
+  --env PGPASSWORD=mcc-local-password \
+  --restart=Never \
+  -- psql -h mcc-postgres -U mcc -d mcc -c "select * from installer_liquibase_test;"
+
+echo
 echo "Final Helm releases:"
 $HELM list -A
 
