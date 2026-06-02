@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.job.name | quote }}
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: mcc-db-init
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: db-init
+          image: {{ .Values.postgres.image | quote }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PGPASSWORD
+              value: {{ .Values.postgres.password | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "Waiting for PostgreSQL..."
+              until pg_isready -h {{ .Values.postgres.host | quote }} -p {{ .Values.postgres.port }} -U {{ .Values.postgres.username | quote }}; do
+                sleep 2
+              done
+
+              echo "PostgreSQL is ready. Running DB init SQL..."
+
+              psql \
+                -h {{ .Values.postgres.host | quote }} \
+                -p {{ .Values.postgres.port }} \
+                -U {{ .Values.postgres.username | quote }} \
+                -d {{ .Values.postgres.database | quote }} \
+                -v ON_ERROR_STOP=1 \
+                -c "create table if not exists installer_milestone (id serial primary key, name text not null, created_at timestamp not null default now());" \
+                -c "insert into installer_milestone (name) values ('mcc-db-init-job') returning id, name, created_at;"
+
+              echo "DB init finished successfully."
