@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mcc-liquibase
+description: Liquibase migration job for MCC installer experiment
+type: application
+version: 0.1.0
+appVersion: "test"

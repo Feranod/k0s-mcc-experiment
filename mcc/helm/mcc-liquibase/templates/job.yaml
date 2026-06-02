@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.job.name | quote }}
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: mcc-liquibase
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: liquibase
+          image: {{ .Values.liquibase.image | quote }}
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: mcc-liquibase-secret
+          env:
+            - name: LIQUIBASE_COMMAND_URL
+              value: "jdbc:postgresql://{{ .Values.postgres.host }}:{{ .Values.postgres.port }}/{{ .Values.postgres.database }}"
+          volumeMounts:
+            - name: changelog
+              mountPath: /liquibase/changelog
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "Running Liquibase migration..."
+              echo "Changelog directory content:"
+              ls -la /liquibase/changelog
+
+              liquibase \
+                --searchPath=/liquibase/changelog \
+                --changeLogFile=changelog.xml \
+                update
+
+              echo "Liquibase migration finished."
+      volumes:
+        - name: changelog
+          configMap:
+            name: mcc-liquibase-changelog

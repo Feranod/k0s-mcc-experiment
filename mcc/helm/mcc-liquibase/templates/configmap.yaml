@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcc-liquibase-changelog
+  namespace: {{ .Values.namespace | quote }}
+data:
+  changelog.xml: |-
+{{ .Files.Get "changelog/changelog.xml" | indent 4 }}

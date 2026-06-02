@@ -1,0 +1,14 @@
+namespace: mcc-db
+
+liquibase:
+  image: liquibase/liquibase:4.30
+
+postgres:
+  host: mcc-postgres
+  port: 5432
+  database: mcc
+  username: mcc
+  password: mcc-local-password
+
+job:
+  name: mcc-liquibase
